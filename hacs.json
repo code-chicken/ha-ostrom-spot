@@ -1,10 +1,6 @@
 {
   "name": "Ostrom Spot Prices",
-  "homeassistant": "2025.2.4",
+  "homeassistant": "2025.10.0",
   "hacs": "2.0.5",
-  "iot_class": "cloud_polling",
-  "domains": [
-    "ostrom_spot",
-    "utility_meter"
-  ]
+  "iot_class": "cloud_polling"
 }
