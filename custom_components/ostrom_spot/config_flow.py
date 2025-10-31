@@ -1,7 +1,7 @@
 """Config flow for Ostrom Spot Prices."""
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Any
 
 import voluptuous as vol
@@ -10,12 +10,12 @@ from homeassistant.const import CONF_CLIENT_ID, CONF_CLIENT_SECRET
 
 # --- KORREKTUR HIER ---
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError, ConfigEntryAuthFailed
+from homeassistant.exceptions import ConfigEntryAuthFailed, HomeAssistantError
 from homeassistant.util import dt as dt_util
 
 from .api import OstromApiClient
-# -----------------------
 
+# -----------------------
 from .const import CONF_ZIP_CODE, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,11 +25,14 @@ _LOGGER = logging.getLogger(__name__)
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
 
+
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
 
+
 class InvalidZip(HomeAssistantError):
     """Error to indicate the ZIP code is invalid."""
+
 
 class UnknownError(HomeAssistantError):
     """Error to indicate an unknown error occurred."""
@@ -59,10 +62,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     try:
         start_date = dt_util.now().replace(minute=0, second=0, microsecond=0)
         end_date = start_date + timedelta(hours=1)
-        
-        await hass.async_add_executor_job(
-            api.get_spot_prices, start_date, end_date
-        )
+
+        await hass.async_add_executor_job(api.get_spot_prices, start_date, end_date)
     except ConfigEntryAuthFailed as err:
         raise InvalidAuth from err
     except ValueError as err:
@@ -72,7 +73,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     except Exception as err:
         _LOGGER.exception("Unexpected error during validation")
         raise UnknownError from err
-    
+
     return {"title": f"Ostrom ({zip_code})"}
 
 
@@ -94,7 +95,7 @@ class OstromConfigFlow(ConfigFlow, domain=DOMAIN):
             try:
                 info = await validate_input(self.hass, user_input)
                 return self.async_create_entry(title=info["title"], data=user_input)
-            
+
             except InvalidAuth:
                 errors["base"] = "invalid_auth"
             except InvalidZip:

@@ -7,7 +7,7 @@ from typing import Any
 import requests
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .const import API_BASE_URL, AUTH_URL, CONF_CLIENT_ID, CONF_CLIENT_SECRET
+from .const import API_BASE_URL, AUTH_URL
 
 
 class OstromApiClient:
@@ -86,13 +86,17 @@ class OstromApiClient:
         }
 
         try:
-            response = requests.get(endpoint, headers=headers, params=params, timeout=10)
+            response = requests.get(
+                endpoint, headers=headers, params=params, timeout=10
+            )
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as err:
             if err.response.status_code == 400:
                 # 400 kann auch eine ungültige PLZ sein
-                raise ValueError(f"Bad request (invalid ZIP?): {err.response.text}") from err
+                raise ValueError(
+                    f"Bad request (invalid ZIP?): {err.response.text}"
+                ) from err
             raise ConnectionError(f"Error fetching spot prices: {err}") from err
         except Exception as err:
             raise ConnectionError(f"Unexpected error fetching prices: {err}") from err

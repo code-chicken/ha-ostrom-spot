@@ -5,9 +5,9 @@ from typing import Final
 DOMAIN: Final = "ostrom_spot"
 
 # Configuration constants
-CONF_CLIENT_ID: Final = "12f693b6da5e4e5a30cb041d01900a2"
-CONF_CLIENT_SECRET: Final = "5836dece316c81aab56cae49613a09a1a4e77003d04210a82b4588388776ccc"
-CONF_ZIP_CODE: Final = "33378"
+CONF_CLIENT_ID: Final = "client_id"
+CONF_CLIENT_SECRET: Final = "client_secret"
+CONF_ZIP_CODE: Final = "zip_code"
 
 # API Endpoints
 AUTH_URL: Final = "https://auth.production.ostrom-api.io/oauth2/token"

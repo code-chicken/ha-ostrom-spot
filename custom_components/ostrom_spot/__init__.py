@@ -13,7 +13,6 @@ PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Ostrom Spot Prices from a config entry."""
-
     # 1. API-Client erstellen
     client = OstromApiClient(
         client_id=entry.data[CONF_CLIENT_ID],
@@ -37,7 +36,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    
     # Entlade die Plattformen (sensor.py)
     if unload_ok := await hass.config_entries.async_forward_entry_unload(
         entry, PLATFORMS
