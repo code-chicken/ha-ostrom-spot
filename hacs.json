@@ -1,5 +1,10 @@
 {
-    "name": "Integration blueprint",
-    "homeassistant": "2025.2.4",
-    "hacs": "2.0.5"
+  "name": "Ostrom Spot Prices",
+  "homeassistant": "2025.2.4",
+  "hacs": "2.0.5",
+  "iot_class": "cloud_polling",
+  "domains": [
+    "ostrom_spot",
+    "utility_meter"
+  ]
 }

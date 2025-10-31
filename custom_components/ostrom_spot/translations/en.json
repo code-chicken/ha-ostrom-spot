@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ostrom Spot Prices",
+        "description": "Enter your Ostrom API credentials. You can get these from your Ostrom account portal.",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client Secret",
+          "zip_code": "Postal Code (e.g., 10115)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the Ostrom API. Check your internet connection.",
+      "invalid_auth": "Invalid authentication. Please check your Client ID and Client Secret.",
+      "invalid_zip": "Invalid Postal Code. The API returned an error for this code.",
+      "unknown": "An unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This Ostrom account (based on Client ID) is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_price": {
+        "name": "Current Price"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "domain": "ostrom_spot",
+  "name": "Ostrom Spot Prices",
+  "codeowners": [
+    "@ludeeus"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/ludeeus/ostrom_spot",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/ludeeus/ostrom_spot/issues",
+  "version": "0.1.0"
+}
