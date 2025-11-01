@@ -14,12 +14,7 @@ from homeassistant.util import dt as dt_util
 from .api import OstromApiClient
 from .const import CONF_ZIP_CODE, DOMAIN
 
-# --- NEUER IMPORT ---
-# Wir importieren den Options-Handler, den wir erstellt haben
-from .options_flow import OstromOptionsFlowHandler
-
 _LOGGER = logging.getLogger(__name__)
-
 
 # Definition der Exceptions
 class CannotConnect(HomeAssistantError):
@@ -77,18 +72,6 @@ class OstromConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Ostrom Spot Prices."""
 
     VERSION = 1
-
-    # --- NEUE FUNKTION HINZUGEFÜGT ---
-    # Diese Funktion sagt HA, welche Klasse es für den "Konfigurieren"-Button verwenden soll
-    @staticmethod
-    @callback
-    def async_get_options_flow(
-        config_entry: config_entries.ConfigEntry,
-    ) -> config_entries.OptionsFlow:
-        """Erstellt den Handler für den Options-Flow."""
-        return OstromOptionsFlowHandler()
-    # --- ENDE NEUE FUNKTION ---
-
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
