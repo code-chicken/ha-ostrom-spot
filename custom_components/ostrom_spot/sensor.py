@@ -26,9 +26,8 @@ from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
-from .const import DOMAIN, CONF_ZIP_CODE
+from .const import DOMAIN, CONF_ZIP_CODE, OPTION_TOTAL_CONSUMPTION
 from .coordinator import OstromDataUpdateCoordinator
-from .options_flow import OPTION_TOTAL_CONSUMPTION
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -116,7 +115,7 @@ class OstromCurrentPriceSensor(CoordinatorEntity, SensorEntity):
     """
 
     _attr_has_entity_name = True
-    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_state_class = None
     _attr_device_class = SensorDeviceClass.MONETARY
     _attr_native_unit_of_measurement = "EUR/kWh"
     _attr_icon = "mdi:currency-eur"
