@@ -4,12 +4,9 @@ import logging
 from datetime import datetime, timedelta
 
 from homeassistant.core import HomeAssistant
-
-# --- KORREKTUR HIER ---
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-
-# -----------------------
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.util import dt as dt_util
 
 from .api import OstromApiClient  # Nur den Client importieren
@@ -25,9 +22,10 @@ POLLING_INTERVAL = timedelta(minutes=30)
 class OstromDataUpdateCoordinator(DataUpdateCoordinator):
     """Manages fetching data from the Ostrom API for all sensors."""
 
-    def __init__(self, hass: HomeAssistant, client: OstromApiClient):
+    def __init__(self, hass: HomeAssistant, client: OstromApiClient, entry: ConfigEntry):
         """Initialisiere den DataUpdateCoordinator."""
         self.client = client
+        self.config_entry = entry  # Speichere den ConfigEntry
         super().__init__(
             hass,
             _LOGGER,
@@ -60,7 +58,12 @@ class OstromDataUpdateCoordinator(DataUpdateCoordinator):
             return self._process_price_data(api_data["data"])
 
         except ConfigEntryAuthFailed as err:
-            # Authentifizierung ist fehlgeschlagen, wir müssen den Benutzer benachrichtigen
+            # FEHLER! Falsche API-Schlüssel im laufenden Betrieb.
+            # Starte den "Neu konfigurieren"-Flow.
+            _LOGGER.warning("Authentication failed: %s. Starting re-auth flow.", err)
+            self.hass.config_entries.async_start_reauth_flow(self.config_entry.entry_id)
+            
+            # Wirf den Fehler trotzdem, damit das Update als fehlgeschlagen markiert wird
             raise UpdateFailed(f"Authentication failed: {err}") from err
         except ConnectionError as err:
             # Temporärer Netzwerkfehler (dies ist ein Python Built-in)

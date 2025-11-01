@@ -3,6 +3,7 @@
 import logging
 from datetime import timedelta
 from typing import Any
+from homeassistant import data_entry_flow
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
@@ -110,3 +111,60 @@ class OstromConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=STEP_USER_DATA_SCHEMA,
             errors=errors,
         )
+
+    async def async_step_reauth(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """
+        Behandelt den "Neu konfigurieren"-Flow.
+        Wird aufgerufen, wenn die Authentifizierung fehlgeschlagen ist.
+        """
+        
+        # Hole den bestehenden Config-Eintrag, der die Neukonfiguration ausgelöst hat
+        entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
+        assert entry is not None
+
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            # Benutzer hat das Formular abgeschickt, validiere die NEUEN Daten
+            try:
+                info = await validate_input(self.hass, user_input)
+                
+                # Update den bestehenden Eintrag mit den neuen Daten
+                self.hass.config_entries.async_update_entry(
+                    entry, data=user_input, title=info["title"]
+                )
+                
+                # Lade die Integration neu, damit sie die neuen Daten verwendet
+                await self.hass.config_entries.async_reload(entry.entry_id)
+                
+                # Schließe den Flow
+                return self.async_abort(reason="reauth_successful")
+
+            except InvalidAuth:
+                errors["base"] = "invalid_auth"
+            except InvalidZip:
+                errors["base"] = "invalid_zip"
+            except CannotConnect:
+                errors["base"] = "cannot_connect"
+            except UnknownError:
+                errors["base"] = "unknown"
+
+        # Zeige das Formular an.
+        # WICHTIG: Wir füllen das Formular mit den ALTEN Daten vor,
+        # damit der Benutzer sieht, was er ändern muss.
+        return self.async_show_form(
+            step_id="reauth",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_CLIENT_ID, default=entry.data.get(CONF_CLIENT_ID)): str,
+                    vol.Required(CONF_CLIENT_SECRET, default=""): str, # Secret aus Sicherheitsgründen nie vorfüllen
+                    vol.Required(CONF_ZIP_CODE, default=entry.data.get(CONF_ZIP_CODE)): str,
+                }
+            ),
+            errors=errors,
+        )
+
+
+    
